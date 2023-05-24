@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+</head>
+
+<body class="bg-light d-flex justify-content-center align-items-center" style="height: 100vh; margin: 0;">
+    <div class="card">
+        <div class="card-header text-center">
+            Milp Chat
+        </div>
+        <div id="chatContainer" class="card-body bg-white" style="overflow: auto; max-height: 500px; height: 500px;">
+        </div>
+        <div class="card-footer">
+            <div class="input-group">
+                <input id="chatInput" type="text" class="form-control" placeholder="Type your message..." onkeydown="checkInput(event)">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .user {
+            text-align: right;
+            color: black;
+			background-color: #eee;
+        }
+        .assistant {
+            text-align: left;
+            color: black;
+			background-color: #eee;
+        }
+        .username {
+            font-weight: bold;
+        }
+    </style>
+
+    <script>
+        var chatContainer = document.getElementById('chatContainer');
+        var chatInput = document.getElementById('chatInput');
+
+        function checkInput(e) {
+            if (e.keyCode === 13) { // Enter key was pressed
+                e.preventDefault(); // Prevent the default action (form submission)
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            var message = chatInput.value;
+            if (message.trim() !== '') {
+                var userMessageElement = document.createElement('p');
+                userMessageElement.className = 'message user';
+                userMessageElement.innerHTML = '<span class="username">User1:</span><br/>' + message;
+                chatContainer.appendChild(userMessageElement);
+
+                axios.get('https://jsonplaceholder.typicode.com/posts/1')  // A sample GET request
+                    .then(function(response) {
+                        var assistantMessageElement = document.createElement('p');
+                        assistantMessageElement.className = 'message assistant';
+                        assistantMessageElement.innerHTML = '<span class="username">Assistant:</span><br/>' + response.data.title;
+                        chatContainer.appendChild(assistantMessageElement);
+                        // Auto scroll to the bottom
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
+
+                chatInput.value = '';
+            }
+        }
+    </script>
+</body>
+
+
+
+</html>
